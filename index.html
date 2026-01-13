@@ -1,64 +1,142 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>MyFit Pro</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      color: #222;
-    }
-    header {
-      background: #ffffff;
-      padding: 16px;
-      font-size: 22px;
-      font-weight: bold;
-      text-align: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .card {
-      background: white;
-      margin: 16px;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    }
-    button {
-      width: 100%;
-      padding: 14px;
-      background: #2ecc71;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      color: white;
-      margin-top: 12px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>MyFit Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin:0;
+  font-family: Arial;
+  background:#f4f4f4;
+}
+header {
+  background:#fff;
+  padding:15px;
+  font-size:22px;
+  font-weight:bold;
+  text-align:center;
+  box-shadow:0 2px 5px rgba(0,0,0,.1);
+}
+.page {
+  display:none;
+  padding:20px;
+}
+.page.active {
+  display:block;
+}
+.card {
+  background:white;
+  padding:20px;
+  margin-bottom:15px;
+  border-radius:12px;
+  box-shadow:0 2px 6px rgba(0,0,0,.1);
+}
+button {
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:8px;
+  background:#2ecc71;
+  color:white;
+  font-size:16px;
+}
+.back {
+  background:#3498db;
+}
+input {
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+</style>
 </head>
+
 <body>
 
 <header>MyFit Pro</header>
 
-<div class="card">
-  <h3>Treino Livre</h3>
-  <p>Crie seu treino do seu jeito.</p>
-  <button>Começar</button>
+<div id="home" class="page active">
+  <div class="card">
+    <h3>Treino Livre</h3>
+    <button onclick="go('treino')">Entrar</button>
+  </div>
+  <div class="card">
+    <h3>Histórico</h3>
+    <button onclick="go('historico')">Abrir</button>
+  </div>
+  <div class="card">
+    <h3>Cronômetro</h3>
+    <button onclick="go('cronometro')">Iniciar</button>
+  </div>
 </div>
 
-<div class="card">
-  <h3>Histórico</h3>
-  <p>Veja seus treinos e evolução.</p>
-  <button>Abrir</button>
+<div id="treino" class="page">
+  <h2>Treino Livre</h2>
+  <input id="exercicio" placeholder="Exercício">
+  <input id="peso" placeholder="Peso (kg)">
+  <button onclick="addSerie()">Adicionar série</button>
+  <div id="lista"></div>
+  <button class="back" onclick="go('home')">Voltar</button>
 </div>
 
-<div class="card">
-  <h3>Cronômetro</h3>
-  <p>Controle o tempo de cada série.</p>
-  <button>Iniciar</button>
+<div id="historico" class="page">
+  <h2>Histórico</h2>
+  <div id="historicoLista"></div>
+  <button class="back" onclick="go('home')">Voltar</button>
 </div>
+
+<div id="cronometro" class="page">
+  <h2>Cronômetro</h2>
+  <h1 id="time">00:00</h1>
+  <button onclick="start()">Iniciar</button>
+  <button onclick="stop()">Parar</button>
+  <button class="back" onclick="go('home')">Voltar</button>
+</div>
+
+<script>
+let treino = [];
+let timer;
+let seconds = 0;
+
+function go(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(page).classList.add('active');
+  if(page==="historico") loadHistorico();
+}
+
+function addSerie(){
+  let ex = exercicio.value;
+  let p = peso.value;
+  treino.push({ex,p});
+  lista.innerHTML += `<div class="card">${ex} - ${p}kg</div>`;
+  localStorage.setItem("treino", JSON.stringify(treino));
+}
+
+function loadHistorico(){
+  let h = JSON.parse(localStorage.getItem("treino")) || [];
+  historicoLista.innerHTML = "";
+  h.forEach(t=>{
+    historicoLista.innerHTML += `<div class="card">${t.ex} - ${t.p}kg</div>`;
+  });
+}
+
+function start(){
+  timer = setInterval(()=>{
+    seconds++;
+    let m = String(Math.floor(seconds/60)).padStart(2,"0");
+    let s = String(seconds%60).padStart(2,"0");
+    time.innerText = m+":"+s;
+  },1000);
+}
+function stop(){
+  clearInterval(timer);
+}
+</script>
 
 </body>
 </html>
