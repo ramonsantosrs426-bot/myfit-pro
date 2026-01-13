@@ -19,13 +19,8 @@ header {
   text-align:center;
   box-shadow:0 2px 5px rgba(0,0,0,.1);
 }
-.page {
-  display:none;
-  padding:20px;
-}
-.page.active {
-  display:block;
-}
+.page { display:none; padding:20px; }
+.page.active { display:block; }
 .card {
   background:white;
   padding:20px;
@@ -43,15 +38,18 @@ button {
   color:white;
   font-size:16px;
 }
-.back {
-  background:#3498db;
-}
+.back { background:#3498db; }
 input {
   width:100%;
   padding:10px;
   margin-top:10px;
   border-radius:6px;
   border:1px solid #ccc;
+}
+iframe {
+  width:100%;
+  height:200px;
+  border-radius:10px;
 }
 </style>
 </head>
@@ -62,39 +60,28 @@ input {
 
 <div id="home" class="page active">
   <div class="card">
-    <h3>Treino Livre</h3>
-    <button onclick="go('treino')">Entrar</button>
-  </div>
-  <div class="card">
-    <h3>Histórico</h3>
-    <button onclick="go('historico')">Abrir</button>
-  </div>
-  <div class="card">
-    <h3>Cronômetro</h3>
-    <button onclick="go('cronometro')">Iniciar</button>
+    <h3>Supino Reto</h3>
+    <button onclick="go('treino')">Treinar</button>
   </div>
 </div>
 
 <div id="treino" class="page">
-  <h2>Treino Livre</h2>
-  <input id="exercicio" placeholder="Exercício">
-  <input id="peso" placeholder="Peso (kg)">
-  <button onclick="addSerie()">Adicionar série</button>
+  <h2>Supino Reto</h2>
+
+  <iframe src="https://www.youtube.com/embed/rT7DgCr-3pg" allowfullscreen></iframe>
+
+  <p>Exercício para peitoral, ombros e tríceps.</p>
+
+  <input id="peso" placeholder="Peso usado (kg)">
+  <button onclick="addSerie()">Registrar série</button>
+
   <div id="lista"></div>
-  <button class="back" onclick="go('home')">Voltar</button>
-</div>
 
-<div id="historico" class="page">
-  <h2>Histórico</h2>
-  <div id="historicoLista"></div>
-  <button class="back" onclick="go('home')">Voltar</button>
-</div>
-
-<div id="cronometro" class="page">
-  <h2>Cronômetro</h2>
+  <h3>Descanso</h3>
   <h1 id="time">00:00</h1>
-  <button onclick="start()">Iniciar</button>
+  <button onclick="start()">Iniciar descanso</button>
   <button onclick="stop()">Parar</button>
+
   <button class="back" onclick="go('home')">Voltar</button>
 </div>
 
@@ -106,23 +93,12 @@ let seconds = 0;
 function go(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(page).classList.add('active');
-  if(page==="historico") loadHistorico();
 }
 
 function addSerie(){
-  let ex = exercicio.value;
   let p = peso.value;
-  treino.push({ex,p});
-  lista.innerHTML += `<div class="card">${ex} - ${p}kg</div>`;
-  localStorage.setItem("treino", JSON.stringify(treino));
-}
-
-function loadHistorico(){
-  let h = JSON.parse(localStorage.getItem("treino")) || [];
-  historicoLista.innerHTML = "";
-  h.forEach(t=>{
-    historicoLista.innerHTML += `<div class="card">${t.ex} - ${t.p}kg</div>`;
-  });
+  treino.push(p);
+  lista.innerHTML += `<div class="card">Série - ${p}kg</div>`;
 }
 
 function start(){
