@@ -4,113 +4,84 @@
 <meta charset="UTF-8">
 <title>MyFit Pro</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-body {
-  margin:0;
-  font-family: Arial;
-  background:#f4f4f4;
-}
-header {
-  background:#fff;
-  padding:15px;
-  font-size:22px;
-  font-weight:bold;
-  text-align:center;
-  box-shadow:0 2px 5px rgba(0,0,0,.1);
-}
-.page { display:none; padding:20px; }
-.page.active { display:block; }
-.card {
-  background:white;
-  padding:20px;
-  margin-bottom:15px;
-  border-radius:12px;
-  box-shadow:0 2px 6px rgba(0,0,0,.1);
-}
-button {
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border:none;
-  border-radius:8px;
-  background:#2ecc71;
-  color:white;
-  font-size:16px;
-}
-.back { background:#3498db; }
-input {
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  border-radius:6px;
-  border:1px solid #ccc;
-}
-iframe {
-  width:100%;
-  height:200px;
-  border-radius:10px;
-}
+body{margin:0;font-family:Arial;background:#f4f4f4;}
+header{background:#fff;padding:15px;font-size:22px;font-weight:bold;text-align:center;box-shadow:0 2px 5px rgba(0,0,0,.1);}
+.page{display:none;padding:20px;}
+.page.active{display:block;}
+.card{background:#fff;padding:15px;margin-bottom:12px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,.1);}
+button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;background:#2ecc71;color:#fff;font-size:16px;}
+.back{background:#3498db;}
+iframe{width:100%;height:200px;border-radius:10px;}
+input{width:100%;padding:10px;margin-top:10px;border-radius:6px;border:1px solid #ccc;}
 </style>
 </head>
-
 <body>
 
 <header>MyFit Pro</header>
 
 <div id="home" class="page active">
-  <div class="card">
-    <h3>Supino Reto</h3>
-    <button onclick="go('treino')">Treinar</button>
-  </div>
+  <div class="card"><button onclick="go('library')">📚 Biblioteca de Exercícios</button></div>
+  <div class="card"><button onclick="go('treino')">📋 Meu Treino</button></div>
 </div>
 
-<div id="treino" class="page">
-  <h2>Supino Reto</h2>
+<div id="library" class="page">
+  <h2>Biblioteca</h2>
 
-  <iframe src="https://www.youtube.com/embed/rT7DgCr-3pg" allowfullscreen></iframe>
+  <div class="card">
+    <h3>Supino Reto</h3>
+    <button onclick="add('Supino Reto','https://www.youtube.com/embed/rT7DgCr-3pg')">Adicionar</button>
+  </div>
 
-  <p>Exercício para peitoral, ombros e tríceps.</p>
+  <div class="card">
+    <h3>Agachamento</h3>
+    <button onclick="add('Agachamento','https://www.youtube.com/embed/aclHkVaku9U')">Adicionar</button>
+  </div>
 
-  <input id="peso" placeholder="Peso usado (kg)">
-  <button onclick="addSerie()">Registrar série</button>
+  <div class="card">
+    <h3>Puxada Frontal</h3>
+    <button onclick="add('Puxada Frontal','https://www.youtube.com/embed/CAwf7n6Luuc')">Adicionar</button>
+  </div>
 
-  <div id="lista"></div>
-
-  <h3>Descanso</h3>
-  <h1 id="time">00:00</h1>
-  <button onclick="start()">Iniciar descanso</button>
-  <button onclick="stop()">Parar</button>
+  <div class="card">
+    <h3>Rosca Direta</h3>
+    <button onclick="add('Rosca Direta','https://www.youtube.com/embed/kwG2ipFRgfo')">Adicionar</button>
+  </div>
 
   <button class="back" onclick="go('home')">Voltar</button>
 </div>
 
+<div id="treino" class="page">
+  <h2>Meu Treino</h2>
+  <div id="treinos"></div>
+  <button class="back" onclick="go('home')">Voltar</button>
+</div>
+
 <script>
-let treino = [];
-let timer;
-let seconds = 0;
+let lista = [];
 
-function go(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(page).classList.add('active');
+function go(p){
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  document.getElementById(p).classList.add('active');
 }
 
-function addSerie(){
-  let p = peso.value;
-  treino.push(p);
-  lista.innerHTML += `<div class="card">Série - ${p}kg</div>`;
+function add(nome, video){
+  lista.push({nome, video});
+  alert(nome + " adicionado ao treino!");
+  render();
 }
 
-function start(){
-  timer = setInterval(()=>{
-    seconds++;
-    let m = String(Math.floor(seconds/60)).padStart(2,"0");
-    let s = String(seconds%60).padStart(2,"0");
-    time.innerText = m+":"+s;
-  },1000);
-}
-function stop(){
-  clearInterval(timer);
+function render(){
+  treinos.innerHTML = "";
+  lista.forEach(ex=>{
+    treinos.innerHTML += `
+      <div class="card">
+        <h3>${ex.nome}</h3>
+        <iframe src="${ex.video}" allowfullscreen></iframe>
+        <input placeholder="Peso usado (kg)">
+      </div>
+    `;
+  });
 }
 </script>
 
